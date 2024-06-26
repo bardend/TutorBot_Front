@@ -7,6 +7,7 @@ import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import ChatbotInteraction from '../components/ChatbotInteraction'
 import Navbar from '../components/NavbarEbooks'
+import axios from 'axios';
 
 const ContainerChatbotMenuPrincipal = styled('div')({
     display: 'flex',
@@ -40,19 +41,28 @@ const LogoDiv = styled(Container)({
 
 
 const Chatbot = () => {
+  const activateMicrophone = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_REACT_API_URL}/api/v1/bot/speech-to-text`);
+      return response.data.transcript;
+    } catch (error) {
+      console.error('Error al obtener el mensaje:', error);
+      return null;
+    }
+  };
+
   return (
     <>
-    <div style={{display:'flex', flexDirection: 'column'}}>
-      <ContainerChatbotMenuPrincipal>
-              <LogoDiv>
-                  <Navbar page='Regresar' route='/principalmenu'/>
-                  <Image src={imageChatbot} alt='logo tutor bot'/>
-                  <Typography variant='h3' sx={{fontFamily: 'Lily Script One'}}>Tutor Bot</Typography>
-                  
-              </LogoDiv>
-              <ChatbotInteraction />
-          </ContainerChatbotMenuPrincipal>    
-    </div>  
+      <div style={{display:'flex', flexDirection: 'column'}}>
+        <ContainerChatbotMenuPrincipal>
+          <LogoDiv>
+            <Navbar page='Regresar' route='/principalmenu'/>
+            <Image src={imageChatbot} alt='logo tutor bot'/>
+            <Typography variant='h3' sx={{fontFamily: 'Lily Script One'}}>Tutor Bot</Typography>
+          </LogoDiv>
+          <ChatbotInteraction activateMicrophone={activateMicrophone} />
+        </ContainerChatbotMenuPrincipal>    
+      </div>  
     </>
   )
 }
