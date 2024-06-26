@@ -67,10 +67,10 @@ const ButtonDiv = styled(Box)({
 const Quiz = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { topic, questions, questionnaire_id } = location.state || { topic: 'Quiz', questions: [
+    const { topic, questions, questionnaire_id } = location.state || { topic: 'Esta llegando tus preguntas un momento porfavooor!!', questions: [
         {
-            question: '¿Qué es primero, el huevo o la gallina?',
-            options: ['a) Huevo', 'b) Gallina'],
+            question: '¿Como te sientes hoy?',
+            options: ['a) Bien', 'b) Excelente'- 'c) Genial'],
             answer: 0
         }
     ], questionnaire_id: 1};
