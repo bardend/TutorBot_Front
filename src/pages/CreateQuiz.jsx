@@ -11,7 +11,7 @@ const ContainerQuizMenuPrincipal = styled('div')({
     alignItems: 'center',
     height: '100vh',
     width: '100vw',
-    background: 'linear-gradient(99deg, rgba(139,204,204,1) 0%, rgba(69,102,102,1) 100%)',
+    background: 'linear-gradient(99deg, #D1D5FD 0%, #D1D5FD 100%)',
     padding: '0',
     margin: '0',
 });
@@ -32,11 +32,24 @@ const CustomContainer = styled('div')({
 });
 
 const ButtonStyled = styled('button')({
-    backgroundColor: '#6B9D9D',
+    color: '#fff',
+    backgroundColor: '#757AF4',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    margin:'25px',
+    width: '200px',  // Ancho del botón
+    height: '50px',  // Alto del botón
+    fontSize: '28px',  // Tamaño de fuente
+    padding: '10px 20px',  // Relleno del botón
+    border: 'none',  // Quitar borde
+    borderRadius: '15px',  // Bordes redondeados
+    cursor: 'pointer',  // Cambia el cursor al pasar sobre el botón
+    ':hover': {
+        backgroundColor: '#5a5ed0',  // Color de fondo al pasar sobre el botón
+    }
 });
+
 
 const InputStyled = styled('input')({
     backgroundColor: '#fff',

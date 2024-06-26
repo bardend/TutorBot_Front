@@ -3,7 +3,14 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   font-family: Arial, sans-serif;
-  margin: 20px;
+  height: 100%;
+  width: 100vw;
+  display: flex;
+  place-items: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-items: center
 `;
 
 const Title = styled.h1`
@@ -21,6 +28,8 @@ const QuestionContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
+  width: 80%; /* Fijamos un ancho del 80% del contenedor */
+  justify-content: center;
 `;
 
 const QuestionTitle = styled.h3`
@@ -44,7 +53,7 @@ const OptionItem = styled.li`
 `;
 
 const PrintButton = styled.button`
-  margin-top: 20px;
+  margin-bottom: 40px;
   padding: 10px 20px;
   font-size: 16px;
   border: none;
@@ -94,28 +103,28 @@ const VerDetalles = () => {
   }
 
   return (
-    <Container>
-      <Title>Quiz</Title>
-      <PrintButton onClick={handlePrint}>Imprimir</PrintButton>
-      {quizData.length === 0 ? (
-        <p>Cargando...</p>
-      ) : (
-        quizData.map((questionData, index) => (
-          <QuestionContainer key={index}>
-            <QuestionTitle>
-              {index + 1}. {questionData.question}
-            </QuestionTitle>
-            <OptionsList>
-              {questionData.options.map((option, idx) => (
-                <OptionItem key={idx} isCorrect={idx === questionData.answer}>
-                  {option}
-                </OptionItem>
-              ))}
-            </OptionsList>
-          </QuestionContainer>
-        ))
-      )}
-    </Container>
+        <Container>
+          <Title>Quiz</Title>
+          <PrintButton onClick={handlePrint}>Imprimir</PrintButton>
+          {quizData.length === 0 ? (
+            <p>Cargando...</p>
+          ) : (
+            quizData.map((questionData, index) => (
+              <QuestionContainer key={index}>
+                <QuestionTitle>
+                  {index + 1}. {questionData.question}
+                </QuestionTitle>
+                <OptionsList>
+                  {questionData.options.map((option, idx) => (
+                    <OptionItem key={idx} isCorrect={idx === questionData.answer}>
+                      {option}
+                    </OptionItem>
+                  ))}
+                </OptionsList>
+              </QuestionContainer>
+            ))
+          )}
+      </Container>
   );
 };
 

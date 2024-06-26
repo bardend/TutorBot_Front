@@ -23,7 +23,7 @@ const ContainerQuizMenuPrincipal = styled('div')({
     alignItems: 'center',
     height: '100vh',
     width: '100vw',
-    background: 'linear-gradient(99deg, rgba(139,204,204,1) 0%, rgba(69,102,102,1) 100%)',
+    background: 'linear-gradient(99deg, #D1D5FD 0%, #D1D5FD 100%)',
     padding: '0',
     margin: '0',
 });
@@ -128,7 +128,7 @@ const Quiz = () => {
 
             if (response.status === 200) {
                 console.log('Quiz creado:', response.data);
-                navigate('/score', { state: { score, topic } }); // Aquí se pasa "score" y "topic"
+                navigate('/score', { state: { score, topic } }); 
             } else {
                 console.error('Error al crear el quiz');
             }
@@ -160,7 +160,7 @@ const Quiz = () => {
                 <Question question={questions[currentQuestion].question} />
                 <OptionsQuestion
                     options={questions[currentQuestion].options}
-                    selectedAnswer={selectedAnswer !== null ? selectedAnswer.toString() : null}  // Aseguramos que el valor sea una cadena
+                    selectedAnswer={selectedAnswer !== null ? selectedAnswer.toString() : null} 
                     onAnswerChange={handleAnswerChange}
                 />
                 <ButtonDiv>
