@@ -150,7 +150,7 @@ const Quiz = () => {
     return (
         <ContainerQuizMenuPrincipal>
             <LogoDiv>
-                <Navbar page='Regresar' route='/principalmenu' />
+                <Navbar page='' route='/principalmenu' />
                 <Image src={imageChatbot} alt='logo tutor bot' />
                 <Typography variant='h3' sx={{ fontFamily: 'Lily Script One' }}>{topic}</Typography>
                 <TimerQuiz initialTime={60} onTimeUp={handleTimeUp} />

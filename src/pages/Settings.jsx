@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { 
   Typography, Grid, Paper, Avatar, Button, LinearProgress, 
   Table, TableBody, TableCell, TableContainer, TableRow,
@@ -10,15 +11,33 @@ import {
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
-const ProfileContainer = styled(Container)(({ theme }) => ({
+import SidebarUser from '../components/SidebarUser'
+import { Link, useNavigate } from 'react-router-dom';
+import Navbar from '../components/NavbarEbooks';
+
+
+
+
+const ProfileContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start ',
+  height: '100vh',
+  width: '100vw',
+  background: 'linear-gradient(99deg, #D1D5FD 0%, #D1D5FD 100%)',
+  padding: '0',
+});
+
+const ProfileContent = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  minHeight: '100vh',
-  padding: theme.spacing(3),
-  backgroundColor: theme.palette.background.default,
-  maxWidth: '1000px !important',
-  marginLeft: 'auto !important',
-  marginRight: 'auto !important',
+  alignItems: 'center',
+  width: '100%',
+  backgroundColor: 'var(--secondary-color)',
+  padding: '5rem',
+  margin: '0',
+  gap: '20px',
 }));
 
 const ProfileHeader = styled(Paper)(({ theme }) => ({
@@ -140,6 +159,17 @@ const MiPerfil = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
+    const [user, setUser] = useState({})
+
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            navigate('/');
+        }
+        setUser(user)
+    }, [navigate]);
   const [profileImage, setProfileImage] = useState(() => {
     return localStorage.getItem('profileImage') || '/default-avatar.png';
   });
@@ -225,11 +255,11 @@ const MiPerfil = () => {
     totalQuizzes: total_exams || 0,
     averageScore: average_score ? parseFloat(average_score).toFixed(2) : 0,
     totalTime: '30h 45m',
-    lastActive: '20 min atrás',
+    lastActive: '7 min atrás',
     completionRate: 75,
     ranking: 15,
     badges: 8,
-    streak: 7,
+    streak: 1,
     level: 5,
     xp: 750,
     xpToNextLevel: 1000,
@@ -245,170 +275,173 @@ const MiPerfil = () => {
 
   return (
     <ProfileContainer>
+      <SidebarUser email={user.email} name={user.name}/>
       {showLevelUp && <LevelUpAnimation>¡Nivel Subido!</LevelUpAnimation>}
-      
-      <ProfileHeader elevation={3}>
-        <ProfileAvatar src={profileImage} alt={name} />
-        <ProfileInfo>
-          <Typography variant="h4" gutterBottom>{name}</Typography>
-          <IconText>
-            <Email /> <Typography variant="body1">{email}</Typography>
-          </IconText>
-          <label htmlFor="upload-photo">
-            <UploadInput
-              accept="image/*"
-              id="upload-photo"
-              type="file"
-              onChange={handleImageUpload}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              component="span"
-              startIcon={<PhotoCamera />}
-              sx={{ mt: 2, alignSelf: 'flex-start' }}
-            >
-              Editar Foto de Perfil
-            </Button>
-          </label>
-        </ProfileInfo>
-        <UserLevel>Lvl {stats.level}</UserLevel>
-      </ProfileHeader>
-      
-      <XPBar 
-        variant="determinate" 
-        value={(stats.xp / stats.xpToNextLevel) * 100} 
-        sx={{ mt: 2, mb: 1 }}
-      />
-      <Typography variant="body2" align="center">
-        {stats.xp} / {stats.xpToNextLevel} XP
-      </Typography>
-
-      <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'flex-start' }}>
-        <Grid item xs={12} sm={6} md={6}>
-          <StatsCard>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Cuestionarios</Typography>
-              <AnimatedStat variant="h3">{stats.totalQuizzes}</AnimatedStat>
-              <IconText>
-                <LibraryBooks />
-                <Typography variant="body2">Total completados</Typography>
-              </IconText>
-            </CardContent>
-          </StatsCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={6}>
-          <StatsCard>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Puntuación</Typography>
-              <AnimatedStat variant="h3" style={{ color }}>{stats.averageScore}</AnimatedStat>
-              <IconText>
-                {icon}
-                <Typography variant="body2">Promedio general</Typography>
-              </IconText>
-            </CardContent>
-          </StatsCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={6}>
-          <StatsCard>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Tiempo de Estudio</Typography>
-              <AnimatedStat variant="h3">{stats.totalTime}</AnimatedStat>
-              <IconText>
-                <AccessTime />
-                <Typography variant="body2">Última actividad: {stats.lastActive}</Typography>
-              </IconText>
-            </CardContent>
-          </StatsCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={6}>
-          <StatsCard>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Racha</Typography>
-              <AnimatedStat variant="h3">
-                <LocalFireDepartment sx={{ color: 'orange', mr: 1 }} />
-                {stats.streak}
-              </AnimatedStat>
-              <Typography variant="body2">¡Días seguidos!</Typography>
-            </CardContent>
-          </StatsCard>
-        </Grid>
-      </Grid>
-
-      <ProgressSection>
-        <Typography variant="h6" gutterBottom>Progreso General</Typography>
-        <LinearProgress 
+      <ProfileContent>
+        <Navbar page='' route="/principalmenu" />
+        <ProfileHeader elevation={3}>
+          <ProfileAvatar src={profileImage} alt={name} />
+          <ProfileInfo>
+            <Typography variant="h4" gutterBottom>{name}</Typography>
+            <IconText>
+              <Email /> <Typography variant="body1">{email}</Typography>
+            </IconText>
+            <label htmlFor="upload-photo">
+              <UploadInput
+                accept="image/*"
+                id="upload-photo"
+                type="file"
+                onChange={handleImageUpload}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                component="span"
+                startIcon={<PhotoCamera />}
+                sx={{ mt: 2, alignSelf: 'flex-start' }}
+              >
+                Editar Foto de Perfil
+              </Button>
+            </label>
+          </ProfileInfo>
+          <UserLevel>Lvl {stats.level}</UserLevel>
+        </ProfileHeader>
+        
+        <XPBar 
           variant="determinate" 
-          value={stats.completionRate} 
-          sx={{ height: 10, borderRadius: 5, mb: 1 }} 
+          value={(stats.xp / stats.xpToNextLevel) * 100} 
+          sx={{ mt: 2, mb: 1 }}
         />
-        <Typography variant="body2" align="right">
-          {stats.completionRate}% Completado
+        <Typography variant="body2" align="center">
+          {stats.xp} / {stats.xpToNextLevel} XP
         </Typography>
-      </ProgressSection>
 
-      <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'flex-start' }}>
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Logros</Typography>
-              <Divider sx={{ mb: 2 }} />
-              <Grid container spacing={2}>
-                {achievements.map((achievement) => (
-                  <Grid item key={achievement.id} xs={4}>
-                    <Tooltip title={achievement.name}>
-                      <AchievementBadge
-                        badgeContent={achievement.completed ? <FlashOn color="primary" /> : null}
-                      >
-                        <Avatar
-                          sx={{
-                            width: 56,
-                            height: 56,
-                            bgcolor: achievement.completed ? 'primary.main' : 'grey.300',
-                          }}
+        <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'flex-start' }}>
+          <Grid item xs={12} sm={6} md={6}>
+            <StatsCard>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Cuestionarios</Typography>
+                <AnimatedStat variant="h3">{stats.totalQuizzes}</AnimatedStat>
+                <IconText>
+                  <LibraryBooks />
+                  <Typography variant="body2">Total completados</Typography>
+                </IconText>
+              </CardContent>
+            </StatsCard>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6}>
+            <StatsCard>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Puntuación</Typography>
+                <AnimatedStat variant="h3" style={{ color }}>{stats.averageScore}</AnimatedStat>
+                <IconText>
+                  {icon}
+                  <Typography variant="body2">Promedio general</Typography>
+                </IconText>
+              </CardContent>
+            </StatsCard>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6}>
+            <StatsCard>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Tiempo de Estudio</Typography>
+                <AnimatedStat variant="h3">{stats.totalTime}</AnimatedStat>
+                <IconText>
+                  <AccessTime />
+                  <Typography variant="body2">Última actividad: {stats.lastActive}</Typography>
+                </IconText>
+              </CardContent>
+            </StatsCard>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6}>
+            <StatsCard>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Racha</Typography>
+                <AnimatedStat variant="h3">
+                  <LocalFireDepartment sx={{ color: 'orange', mr: 1 }} />
+                  {stats.streak}
+                </AnimatedStat>
+                <Typography variant="body2">¡Días seguidos!</Typography>
+              </CardContent>
+            </StatsCard>
+          </Grid>
+        </Grid>
+
+        <ProgressSection>
+          <Typography variant="h6" gutterBottom>Progreso General</Typography>
+          <LinearProgress 
+            variant="determinate" 
+            value={stats.completionRate} 
+            sx={{ height: 10, borderRadius: 5, mb: 1 }} 
+          />
+          <Typography variant="body2" align="right">
+            {stats.completionRate}% Completado
+          </Typography>
+        </ProgressSection>
+
+        <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'flex-start' }}>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Logros</Typography>
+                <Divider sx={{ mb: 2 }} />
+                <Grid container spacing={2}>
+                  {achievements.map((achievement) => (
+                    <Grid item key={achievement.id} xs={4}>
+                      <Tooltip title={achievement.name}>
+                        <AchievementBadge
+                          badgeContent={achievement.completed ? <FlashOn color="primary" /> : null}
                         >
-                          {achievement.icon}
-                        </Avatar>
-                      </AchievementBadge>
-                    </Tooltip>
-                  </Grid>
-                ))}
-              </Grid>
-            </CardContent>
-          </Card>
+                          <Avatar
+                            sx={{
+                              width: 56,
+                              height: 56,
+                              bgcolor: achievement.completed ? 'primary.main' : 'grey.300',
+                            }}
+                          >
+                            {achievement.icon}
+                          </Avatar>
+                        </AchievementBadge>
+                      </Tooltip>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Próximos Desafíos</Typography>
+                <TableContainer>
+                  <Table size="small">
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>Completar 5 cuestionarios esta semana</TableCell>
+                        <TableCell align="right">
+                          <LinearProgress variant="determinate" value={60} sx={{ width: 100 }} />
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Obtener una puntuación perfecta</TableCell>
+                        <TableCell align="right">
+                          <LinearProgress variant="determinate" value={30} sx={{ width: 100 }} />
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Alcanzar una racha de 10 días</TableCell>
+                        <TableCell align="right">
+                          <LinearProgress variant="determinate" value={70} sx={{ width: 100 }} />
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Próximos Desafíos</Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>Completar 5 cuestionarios esta semana</TableCell>
-                      <TableCell align="right">
-                        <LinearProgress variant="determinate" value={60} sx={{ width: 100 }} />
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Obtener una puntuación perfecta</TableCell>
-                      <TableCell align="right">
-                        <LinearProgress variant="determinate" value={30} sx={{ width: 100 }} />
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Alcanzar una racha de 10 días</TableCell>
-                      <TableCell align="right">
-                        <LinearProgress variant="determinate" value={70} sx={{ width: 100 }} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      </ProfileContent>
     </ProfileContainer>
   );
 };

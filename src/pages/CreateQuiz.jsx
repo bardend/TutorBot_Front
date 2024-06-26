@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import Navbar from '../components/NavbarEbooks';
+import SidebarUser from '../components/SidebarUser'
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+
 
 const ContainerQuizMenuPrincipal = styled('div')({
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start ',
     height: '100vh',
     width: '100vw',
     background: 'linear-gradient(99deg, #D1D5FD 0%, #D1D5FD 100%)',
     padding: '0',
-    margin: '0',
 });
 
 const CustomContainer = styled('div')({
@@ -29,6 +30,7 @@ const CustomContainer = styled('div')({
     backgroundColor: '#fff',
     padding: '1.5rem',
     gap: '1.5rem',
+    margin: 'auto',
 });
 
 const ButtonStyled = styled('button')({
@@ -122,8 +124,9 @@ const CreateQuiz = () => {
 
     return (
         <ContainerQuizMenuPrincipal>
+            <SidebarUser email={user.email} name={user.name}/>
             <CustomContainer>
-                <Navbar page='Regresar' route="/principalmenu" />
+                <Navbar page='' route="/principalmenu" />
                 <h1>Crear Quiz</h1>
                 <h2>Ingresa el tema principal</h2>
                 <InputStyled

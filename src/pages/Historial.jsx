@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/NavbarEbooks';
+import SidebarUser from '../components/SidebarUser'
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 const ContainerCustom = styled.div`
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
+    flex-direction: row;
+    justifyContent: 'flex-start',
+    align-items: flex-start;
+    height: 100vh;
     width: 100vw;
     background-color: var(--secondary-color);
-    padding-top: 5rem;
-    margin: 0;
 `;
 
 const HistorialContent = styled.div`
@@ -107,6 +108,7 @@ const Historial = () => {
 
     return (
         <ContainerCustom>
+            <SidebarUser email={user.email} name={user.name}/>
             <HistorialContent>
                 <Navbar page="Regresar" route="/principalmenu" />
                 <h2>Exámenes recientes</h2>

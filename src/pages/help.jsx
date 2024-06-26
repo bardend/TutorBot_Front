@@ -181,7 +181,7 @@ const EBook = ({ userAverage = 5 }) => {
   return (
     <PageLayout>
       <ContainerEbook>
-        <Navbar page='Regresar' route="/principalmenu"/>
+        <Navbar page='' route="/principalmenu"/>
         <SearchBar 
           type="text" 
           placeholder="Buscar libros o lenguajes..." 

@@ -116,7 +116,7 @@ const Register = () => {
     return (
         <ContainerPrincipal>
             <LogoDiv>
-            <Navbar page='Regresar' route='/'/>
+            <Navbar page='' route='/'/>
                   <Image src={imageChatbot} alt='logo tutor bot'/>
                   <Typography variant='h3' sx={{fontFamily: 'Lily Script One'}}>Tutor Bot</Typography>
             </LogoDiv>

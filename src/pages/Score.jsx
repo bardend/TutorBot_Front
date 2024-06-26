@@ -51,7 +51,7 @@ const Score = () => {
 
     return (
         <ContainerQuizMenuPrincipal>
-            <Navbar page='Regresar' route='/principalmenu' />
+            <Navbar page='' route='/principalmenu' />
             <ScoreQuizDiv>
                 <h1>Resultado obtenido</h1>
                 <h2>{topic}</h2>

@@ -6,6 +6,7 @@ import PrincipalMenu from './pages/PrincipalMenu';
 import Chatbot from './pages/Chatbot';
 import Quiz from './pages/Quiz';
 import Historial from './pages/Historial';
+import Register from './pages/Register';
 import CreateQuiz from './pages/CreateQuiz';
 import Score from './pages/Score';
 import Login from './pages/Login';
@@ -26,6 +27,7 @@ function App() {
         <Route path="/createquiz" element={<CreateQuiz />} />
         <Route path="/score" element={<Score />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register/>} />
         <Route path="/settings" element={<Settings />} /> {/* Ruta para Configuración */}
       </Routes>
     </Router>
