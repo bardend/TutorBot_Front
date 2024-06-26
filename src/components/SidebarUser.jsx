@@ -105,14 +105,14 @@ const IconWrapper = styled(Box)({
 
 import PropTypes from 'prop-types';
 
+
+
 const SidebarUser = ({ name, email }) => {
   const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/');
   };
-
   return (
     <SidebarContainer>
       <UserPhoto>
@@ -129,17 +129,11 @@ const SidebarUser = ({ name, email }) => {
             <IconWrapper><LibraryBooksIcon /></IconWrapper>Historial
           </Option>
         </Link>
-        <Option>
-          <IconWrapper><NotificationsIcon /></IconWrapper>Notificaciones
-        </Option>
         <Link to='/settings'>
           <Option>
             <IconWrapper><SettingsIcon /></IconWrapper>Configuración
           </Option>
         </Link>
-        <Option>
-          <IconWrapper><HeadphonesIcon /></IconWrapper>Actividades
-        </Option>
         <Option onClick={handleLogout}>
           <IconWrapper><ExitToAppIcon /></IconWrapper>Salir
         </Option>

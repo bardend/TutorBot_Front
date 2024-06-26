@@ -1,60 +1,236 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import Navbar from '../components/NavbarEbooks';
 
-import React, { useState, useEffect } from 'react';
+const PageLayout = styled.div`
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+`;
 
-const Profile = () => {
-  const [profile, setProfile] = useState(null);
-  const [error, setError] = useState(null);
-  const [userId, setUserId] = useState(null); // State to hold the user ID
+const ContainerEbook = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary-color);
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+`;
 
-  useEffect(() => {
-    // Fetch user data from localStorage on component mount
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user && user.user_id) {
-      setUserId(user.user_id); // Set the user ID for fetching profile
+const Sidebar = styled.div`
+  width: 300px;
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+`;
+
+const SidebarTitle = styled.h2`
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 15px;
+`;
+
+const SidebarContent = styled.div`
+  font-size: 14px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const LanguageGif = styled.img`
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  margin-bottom: 15px;
+  border-radius: 8px;
+`;
+
+const SearchBar = styled.input`
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  margin: 20px auto;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  display: block;
+`;
+
+const LanguageContainer = styled.div`
+  width: 100%;
+  margin-bottom: 30px;
+`;
+
+const LanguageTitle = styled.h2`
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 24px;
+  text-align: center;
+`;
+
+const BookGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  justify-items: center;
+`;
+
+const BookLink = styled.a`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  background-color: ${props => props.recommended ? '#ffeb3b' : 'white'};
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 180px;
+  text-align: center;
+
+  &:hover {
+    background-color: ${props => props.recommended ? '#fdd835' : '#f5f5f5'};
+  }
+`;
+
+const BookImage = styled.img`
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 8px;
+`;
+
+const BookTitle = styled.p`
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
+  margin: 5px 0;
+`;
+
+const RecommendedBadge = styled.span`
+  background-color: #4caf50;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  margin-top: 5px;
+`;
+
+const books = [
+  { id: 1, title: "Python básico", language: "Python", level: "Principiante", url: "https://example.com/python-beginners", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg", recommendedFor: [0, 3] },
+  { id: 2, title: "Python intermedio", language: "Python", level: "Intermedio", url: "https://example.com/python-intermediate", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg", recommendedFor: [4, 7] },
+  { id: 3, title: "Python avanzado", language: "Python", level: "Avanzado", url: "https://example.com/python-advanced", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg", recommendedFor: [8, 10] },
+  { id: 4, title: "Java básico", language: "Java", level: "Principiante", url: "https://example.com/java-basics", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", recommendedFor: [0, 3] },
+  { id: 5, title: "Java intermedio", language: "Java", level: "Intermedio", url: "https://example.com/java-intermediate", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", recommendedFor: [4, 7] },
+  { id: 6, title: "Java avanzado", language: "Java", level: "Avanzado", url: "https://example.com/java-advanced", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", recommendedFor: [8, 10] },
+  { id: 7, title: "JavaScript básico", language: "JavaScript", level: "Principiante", url: "https://example.com/js-fundamentals", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg", recommendedFor: [0, 3] },
+  { id: 8, title: "JavaScript avanzado", language: "JavaScript", level: "Avanzado", url: "https://example.com/js-advanced", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg", recommendedFor: [4, 10] },
+  { id: 9, title: "C++ básico", language: "C++", level: "Principiante", url: "https://example.com/cpp-basics", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg", recommendedFor: [0, 5] },
+  { id: 10, title: "C++ avanzado", language: "C++", level: "Avanzado", url: "https://example.com/cpp-advanced", image: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg", recommendedFor: [6, 10] },
+];
+
+const EBook = ({ userAverage = 5 }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
+
+  const filteredBooks = books.filter(book => 
+    book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.language.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const booksByLanguage = filteredBooks.reduce((acc, book) => {
+    if (!acc[book.language]) {
+      acc[book.language] = [];
     }
-  }, []);
+    acc[book.language].push(book);
+    return acc;
+  }, {});
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!userId) return; // Exit if userId is not defined yet
+  const getRecommendedBook = (books, average) => {
+    return books.find(book => 
+      average >= book.recommendedFor[0] && average <= book.recommendedFor[1]
+    );
+  };
 
-      try {
-        console.log(`Fetching profile for user ID: ${userId}`);
-        const response = await fetch(`http://localhost:8000/${userId}/profile`);
-        if (!response.ok) {
-          const errorDetails = await response.text();
-          throw new Error(`Error fetching user profile: ${errorDetails}`);
-        }
-        const data = await response.json();
-        console.log("Profile data:", data);
-        setProfile(data);
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-        setError(error.message);
-      }
-    };
-
-    fetchProfile();
-  }, [userId]);
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!profile) {
-    return <div>Loading...</div>;
-  }
+  const languageTips = {
+    Python: {
+      tip: "Python es conocido por su simplicidad y legibilidad. Empieza con los conceptos básicos como variables, bucles y funciones antes de avanzar a temas más complejos.",
+      gif: "https://media.giphy.com/media/coxQHKASG60HrHtvkt/giphy.gif"
+    },
+    Java: {
+      tip: "Java es un lenguaje versátil usado en muchos entornos. Enfócate en entender la programación orientada a objetos y la sintaxis específica de Java.",
+      gif: "https://media.giphy.com/media/l3vRc1zy8NBqe342I/giphy.gif"
+    },
+    JavaScript: {
+      tip: "JavaScript es esencial para el desarrollo web. Comienza con los fundamentos y luego explora sus capacidades para manipular el DOM y crear interactividad en páginas web.",
+      gif: "https://media.giphy.com/media/ln7z2eWriiQAllfVcn/giphy.gif"
+    },
+    "C++": {
+      tip: "C++ es poderoso pero puede ser complejo. Asegúrate de entender bien los punteros y la gestión de memoria. La práctica constante es clave.",
+      gif: "https://media.giphy.com/media/Ri2TUcKlaOcaDBxFpY/giphy.gif"
+    }
+  };
 
   return (
-    <div className="profile">
-      <h1>User Profile</h1>
-      <p><strong>Username:</strong> {profile.username}</p>
-      <p><strong>Name:</strong> {profile.name}</p>
-      <p><strong>Email:</strong> {profile.email}</p>
-      <p><strong>Total Exams:</strong> {profile.total_exams}</p>
-      <p><strong>Average Score:</strong> {profile.average_score ? profile.average_score.toFixed(2) : 'N/A'}</p>
-    </div>
+    <PageLayout>
+      <ContainerEbook>
+        <Navbar page='Regresar' route="/principalmenu"/>
+        <SearchBar 
+          type="text" 
+          placeholder="Buscar libros o lenguajes..." 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {Object.entries(booksByLanguage).map(([language, languageBooks]) => {
+          const recommendedBook = getRecommendedBook(languageBooks, userAverage);
+          return (
+            <LanguageContainer key={language} onClick={() => setSelectedLanguage(language)}>
+              <LanguageTitle>{language}</LanguageTitle>
+              <BookGrid>
+                {languageBooks.map(book => (
+                  <BookLink 
+                    key={book.id} 
+                    href={book.url} 
+                    target='_blank'
+                    rel="noopener noreferrer"
+                    recommended={book.id === recommendedBook?.id}
+                  >
+                    <BookImage src={book.image} alt={`${book.language} logo`} />
+                    <BookTitle>{`${book.language} ${book.level}`}</BookTitle>
+                    {book.id === recommendedBook?.id && (
+                      <RecommendedBadge>Recomendado</RecommendedBadge>
+                    )}
+                  </BookLink>
+                ))}
+              </BookGrid>
+            </LanguageContainer>
+          );
+        })}
+      </ContainerEbook>
+      <Sidebar>
+        <SidebarTitle>
+          {selectedLanguage ? `Consejos para ${selectedLanguage}` : "Selecciona un lenguaje"}
+        </SidebarTitle>
+        <SidebarContent>
+          {selectedLanguage ? (
+            <>
+              <LanguageGif src={languageTips[selectedLanguage].gif} alt={`${selectedLanguage} animation`} />
+              <p>{languageTips[selectedLanguage].tip}</p>
+            </>
+          ) : (
+            "Haz clic en un lenguaje para ver consejos de aprendizaje y una animación."
+          )}
+        </SidebarContent>
+      </Sidebar>
+    </PageLayout>
   );
 };
 
-export default Profile;
+export default EBook;
