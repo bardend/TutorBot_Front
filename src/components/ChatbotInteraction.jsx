@@ -36,7 +36,7 @@ const CustomContainer = styled(Container)({
 })
 
 
-const ChatbotInteraction = () => {
+const ChatbotInteraction = ({ activateMicrophone }) => {
   const [messages, setMessages] = useState([
     { type: 'bot', text: 'Bienvenido al chat en vivo de Tutobot! Mi nombre es Tutobot bot. En qué puedo servirte el día de hoy? Coméntame de cuáles temas quieres un resumen el día de hoy.' },
   ]);
@@ -46,23 +46,20 @@ const ChatbotInteraction = () => {
     // Aquí puedes añadir la lógica para enviar el mensaje a la IA y recibir la respuesta
   };
 
-
   return (
     <>
-    <GeneralContainer>
+      <GeneralContainer>
         <CustomContainer>
-            {messages.map((msg, index) =>
+          {messages.map((msg, index) =>
             msg.type === 'bot' ? (
-                <BotMessage key={index} message={msg.text} />
+              <BotMessage key={index} message={msg.text} />
             ) : (
-                <UserMessage key={index} message={msg.text} />
+              <UserMessage key={index} message={msg.text} />
             )
-            )}
-            
+          )}
         </CustomContainer>
-        <InputUserChat onSendMessage={handleSendMessage} />
-    </GeneralContainer>
-      
+        <InputUserChat onSendMessage={handleSendMessage} activateMicrophone={activateMicrophone} />
+      </GeneralContainer>
     </>
   );
 };
