@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Navbar from '../components/NavbarEbooks';
+import  { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SidebarUser from '../components/SidebarUser'
+
 
 const PageLayout = styled.div`
   display: flex;
@@ -88,8 +92,8 @@ const LanguageTitle = styled.h2`
 
 const BookGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 10px;
   justify-items: center;
 `;
 
@@ -191,11 +195,20 @@ const EBook = ({ userAverage = 5 }) => {
       gif: "https://media.giphy.com/media/Ri2TUcKlaOcaDBxFpY/giphy.gif"
     }
   };
+  const [user, setUser] = useState({})
+
+  const navigate = useNavigate();
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setUser(user)
+    }, [navigate]);
 
   return (
     <PageLayout>
+      <SidebarUser email={user.email} name={user.name}/>
       <ContainerEbook>
-        <Navbar page='Regresar' route="/principalmenu"/>
+        <Navbar page='' route="/principalmenu"/>
         <SearchBar 
           type="text" 
           placeholder="Buscar libros o lenguajes..." 

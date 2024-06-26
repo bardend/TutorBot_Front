@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Typography, Grid, Paper, Avatar, Button, LinearProgress, 
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Card, CardContent, Divider
+  Table, TableBody, TableCell, TableContainer, TableRow,
+  Card, CardContent, Divider, Tooltip, Badge as MuiBadge, Container
 } from '@mui/material';
 import { 
-  Email, LibraryBooks, Star, AccessTime, TrendingUp, EmojiEvents, SentimentVeryDissatisfied
+  Email, LibraryBooks, Star, AccessTime, TrendingUp, EmojiEvents, SentimentVeryDissatisfied,
+  PhotoCamera, FlashOn, LocalFireDepartment, EmojiEventsOutlined
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
-const ProfileContainer = styled('div')(({ theme }) => ({
+const ProfileContainer = styled(Container)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
   padding: theme.spacing(3),
   backgroundColor: theme.palette.background.default,
-  minHeight: '100vh',
+  maxWidth: '1000px !important',
+  marginLeft: 'auto !important',
+  marginRight: 'auto !important',
 }));
 
 const ProfileHeader = styled(Paper)(({ theme }) => ({
@@ -22,6 +28,8 @@ const ProfileHeader = styled(Paper)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   backgroundColor: theme.palette.background.paper,
   boxShadow: theme.shadows[3],
+  position: 'relative',
+  width: '100%',
 }));
 
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
@@ -41,6 +49,7 @@ const StatsCard = styled(Card)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
+  width: '100%',
 }));
 
 const IconText = styled('div')(({ theme }) => ({
@@ -54,25 +63,102 @@ const IconText = styled('div')(({ theme }) => ({
 
 const ProgressSection = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(3),
+  width: '100%',
 }));
+
+const UploadInput = styled('input')({
+  display: 'none',
+});
+
+const UserLevel = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  top: theme.spacing(1),
+  right: theme.spacing(1),
+  background: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  borderRadius: '50%',
+  width: theme.spacing(8),  // Aumentar el tamaño del ancho
+  height: theme.spacing(8),  // Aumentar el tamaño de la altura
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '1.5rem',
+  fontWeight: 'bold',
+  boxShadow: theme.shadows[3],
+}));
+
+const XPBar = styled(LinearProgress)(({ theme }) => ({
+  height: 20,
+  borderRadius: 10,
+  width: '100%',
+  '& .MuiLinearProgress-bar': {
+    transition: 'transform 1s ease-in-out',
+  },
+}));
+
+const AnimatedStat = styled(Typography)(({ theme }) => ({
+  animation: '$pulse 1s ease-in-out infinite',
+  '@keyframes pulse': {
+    '0%': {
+      transform: 'scale(1)',
+    },
+    '50%': {
+      transform: 'scale(1.05)',
+    },
+    '100%': {
+      transform: 'scale(1)',
+    },
+  },
+}));
+
+const AchievementBadge = styled(MuiBadge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
+
+const LevelUpAnimation = styled('div')({
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  fontSize: '4rem',
+  color: '#FFD700',
+  animation: '$levelUp 2s ease-out',
+  zIndex: 9999,
+  '@keyframes levelUp': {
+    '0%': { opacity: 0, transform: 'translate(-50%, -50%) scale(0.5)' },
+    '50%': { opacity: 1, transform: 'translate(-50%, -50%) scale(1.2)' },
+    '100%': { opacity: 0, transform: 'translate(-50%, -50%) scale(1)' },
+  },
+});
 
 const MiPerfil = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
-  const [userId, setUserId] = useState(null); // State to hold the user ID
+  const [userId, setUserId] = useState(null);
+  const [profileImage, setProfileImage] = useState(() => {
+    return localStorage.getItem('profileImage') || '/default-avatar.png';
+  });
+  const [showLevelUp, setShowLevelUp] = useState(false);
 
-  // Fetch user data from localStorage on component mount
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user && user.user_id) {
-      setUserId(user.user_id); // Set the user ID for fetching profile
+      setUserId(user.user_id);
     }
   }, []);
 
-  // Fetch profile data based on userId
+  useEffect(() => {
+    localStorage.setItem('profileImage', profileImage);
+  }, [profileImage]);
+
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!userId) return; // Exit if userId is not defined yet
+      if (!userId) return;
 
       try {
         console.log(`Fetching profile for user ID: ${userId}`);
@@ -93,67 +179,117 @@ const MiPerfil = () => {
     fetchProfile();
   }, [userId]);
 
-  // Función para determinar el color y el ícono basado en la puntuación
+  useEffect(() => {
+    if (profile && profile.xp >= profile.xpToNextLevel) {
+      setShowLevelUp(true);
+      setTimeout(() => setShowLevelUp(false), 2000);
+    }
+  }, [profile]);
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const imageData = reader.result;
+        setProfileImage(imageData);
+        
+        // Aquí puedes agregar la lógica para enviar la imagen al servidor
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const getScoreStyles = (score) => {
-    let color = '#4CAF50'; // Verde por defecto para puntajes altos
-    let icon = <Star />; // Icono por defecto para puntajes altos
+    let color = '#4CAF50';
+    let icon = <Star />;
 
     if (score < 10) {
-      color = '#F44336'; // Rojo para puntajes bajos
-      icon = <SentimentVeryDissatisfied />; // Icono de carita triste para puntajes bajos
+      color = '#F44336';
+      icon = <SentimentVeryDissatisfied />;
     }
 
     return { color, icon };
   };
 
-  // Renderizado condicional en caso de error
   if (error) {
-    return <div>{error}</div>;
+    return <ProfileContainer><div>{error}</div></ProfileContainer>;
   }
 
-  // Renderizado condicional mientras se carga el perfil
   if (!profile) {
-    return <div>Loading...</div>;
+    return <ProfileContainer><div>Loading...</div></ProfileContainer>;
   }
 
-  // Extracción de datos del perfil y estadísticas
   const { name, email, total_exams, average_score } = profile;
   const stats = {
-    totalQuizzes: 50, // Ejemplo de datos estáticos para estadísticas
-    averageScore: average_score ? parseFloat(average_score).toFixed(2) : 0, // Puntuación promedio
-    totalTime: '30h 45m', // Ejemplo de datos estáticos para estadísticas
-    lastActive: '20 min atrás', // Ejemplo de datos estáticos para estadísticas
-    completionRate: 75, // Ejemplo de datos estáticos para estadísticas
-    ranking: 15, // Ejemplo de datos estáticos para estadísticas
-    badges: 8, // Ejemplo de datos estáticos para estadísticas
-    streak: 7, // Ejemplo de datos estáticos para estadísticas
+    totalQuizzes: total_exams || 0,
+    averageScore: average_score ? parseFloat(average_score).toFixed(2) : 0,
+    totalTime: '30h 45m',
+    lastActive: '20 min atrás',
+    completionRate: 75,
+    ranking: 15,
+    badges: 8,
+    streak: 7,
+    level: 5,
+    xp: 750,
+    xpToNextLevel: 1000,
   };
 
-  // Determina el estilo de la puntuación
   const { color, icon } = getScoreStyles(stats.averageScore);
 
-  // JSX del componente MiPerfil
+  const achievements = [
+    { id: 1, name: 'Primer Cuestionario', icon: <LibraryBooks />, completed: true },
+    { id: 2, name: 'Racha de 7 días', icon: <LocalFireDepartment />, completed: true },
+    { id: 3, name: 'Maestro del Conocimiento', icon: <EmojiEventsOutlined />, completed: false },
+  ];
+
   return (
     <ProfileContainer>
+      {showLevelUp && <LevelUpAnimation>¡Nivel Subido!</LevelUpAnimation>}
+      
       <ProfileHeader elevation={3}>
-        <ProfileAvatar src="/default-avatar.png" alt={name} />
+        <ProfileAvatar src={profileImage} alt={name} />
         <ProfileInfo>
           <Typography variant="h4" gutterBottom>{name}</Typography>
           <IconText>
             <Email /> <Typography variant="body1">{email}</Typography>
           </IconText>
-          <Button variant="contained" color="primary" sx={{ mt: 2, alignSelf: 'flex-start' }}>
-            Editar Perfil
-          </Button>
+          <label htmlFor="upload-photo">
+            <UploadInput
+              accept="image/*"
+              id="upload-photo"
+              type="file"
+              onChange={handleImageUpload}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              component="span"
+              startIcon={<PhotoCamera />}
+              sx={{ mt: 2, alignSelf: 'flex-start' }}
+            >
+              Editar Foto de Perfil
+            </Button>
+          </label>
         </ProfileInfo>
+        <UserLevel>Lvl {stats.level}</UserLevel>
       </ProfileHeader>
       
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
+      <XPBar 
+        variant="determinate" 
+        value={(stats.xp / stats.xpToNextLevel) * 100} 
+        sx={{ mt: 2, mb: 1 }}
+      />
+      <Typography variant="body2" align="center">
+        {stats.xp} / {stats.xpToNextLevel} XP
+      </Typography>
+
+      <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'flex-start' }}>
+        <Grid item xs={12} sm={6} md={6}>
           <StatsCard>
             <CardContent>
               <Typography variant="h6" gutterBottom>Cuestionarios</Typography>
-              <Typography variant="h3">{stats.totalQuizzes}</Typography>
+              <AnimatedStat variant="h3">{stats.totalQuizzes}</AnimatedStat>
               <IconText>
                 <LibraryBooks />
                 <Typography variant="body2">Total completados</Typography>
@@ -161,11 +297,11 @@ const MiPerfil = () => {
             </CardContent>
           </StatsCard>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <StatsCard>
             <CardContent>
-              <Typography variant="h6" gutterBottom>Puntuación 20</Typography>
-              <Typography variant="h3" style={{ color }}>{stats.averageScore}</Typography>
+              <Typography variant="h6" gutterBottom>Puntuación</Typography>
+              <AnimatedStat variant="h3" style={{ color }}>{stats.averageScore}</AnimatedStat>
               <IconText>
                 {icon}
                 <Typography variant="body2">Promedio general</Typography>
@@ -173,11 +309,11 @@ const MiPerfil = () => {
             </CardContent>
           </StatsCard>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <StatsCard>
             <CardContent>
               <Typography variant="h6" gutterBottom>Tiempo de Estudio</Typography>
-              <Typography variant="h3">{stats.totalTime}</Typography>
+              <AnimatedStat variant="h3">{stats.totalTime}</AnimatedStat>
               <IconText>
                 <AccessTime />
                 <Typography variant="body2">Última actividad: {stats.lastActive}</Typography>
@@ -185,15 +321,15 @@ const MiPerfil = () => {
             </CardContent>
           </StatsCard>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <StatsCard>
             <CardContent>
-              <Typography variant="h6" gutterBottom>Ranking</Typography>
-              <Typography variant="h3">#{stats.ranking}</Typography>
-              <IconText>
-                <TrendingUp />
-                <Typography variant="body2">Entre todos los usuarios</Typography>
-              </IconText>
+              <Typography variant="h6" gutterBottom>Racha</Typography>
+              <AnimatedStat variant="h3">
+                <LocalFireDepartment sx={{ color: 'orange', mr: 1 }} />
+                {stats.streak}
+              </AnimatedStat>
+              <Typography variant="body2">¡Días seguidos!</Typography>
             </CardContent>
           </StatsCard>
         </Grid>
@@ -211,38 +347,61 @@ const MiPerfil = () => {
         </Typography>
       </ProgressSection>
 
-      <Grid container spacing={3} sx={{ mt: 3 }}>
+      <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'flex-start' }}>
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>Logros</Typography>
               <Divider sx={{ mb: 2 }} />
-              <IconText>
-                <EmojiEvents />
-                <Typography variant="body1">{stats.badges} Insignias obtenidas</Typography>
-              </IconText>
-              <IconText>
-                <TrendingUp />
-                <Typography variant="body1">Racha actual: {stats.streak} días</Typography>
-              </IconText>
+              <Grid container spacing={2}>
+                {achievements.map((achievement) => (
+                  <Grid item key={achievement.id} xs={4}>
+                    <Tooltip title={achievement.name}>
+                      <AchievementBadge
+                        badgeContent={achievement.completed ? <FlashOn color="primary" /> : null}
+                      >
+                        <Avatar
+                          sx={{
+                            width: 56,
+                            height: 56,
+                            bgcolor: achievement.completed ? 'primary.main' : 'grey.300',
+                          }}
+                        >
+                          {achievement.icon}
+                        </Avatar>
+                      </AchievementBadge>
+                    </Tooltip>
+                  </Grid>
+                ))}
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>Actividad Reciente</Typography>
+              <Typography variant="h6" gutterBottom>Próximos Desafíos</Typography>
               <TableContainer>
                 <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Actividad</TableCell>
-                      <TableCell align="right">Puntuación</TableCell>
-                    </TableRow>
-                  </TableHead>
                   <TableBody>
-                    {/* Aquí puedes mapear los datos de `recentActivity` como lo hiciste anteriormente */}
+                    <TableRow>
+                      <TableCell>Completar 5 cuestionarios esta semana</TableCell>
+                      <TableCell align="right">
+                        <LinearProgress variant="determinate" value={60} sx={{ width: 100 }} />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Obtener una puntuación perfecta</TableCell>
+                      <TableCell align="right">
+                        <LinearProgress variant="determinate" value={30} sx={{ width: 100 }} />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Alcanzar una racha de 10 días</TableCell>
+                      <TableCell align="right">
+                        <LinearProgress variant="determinate" value={70} sx={{ width: 100 }} />
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>

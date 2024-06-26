@@ -11,7 +11,7 @@ const GeneralContainer = styled('div')({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    width: '100%',
+    width: '140%',
     height: '100vh',
     backgroundColor: '#e9ebff',
     padding: '0',
@@ -43,7 +43,6 @@ const ChatbotInteraction = ({ activateMicrophone }) => {
 
   const handleSendMessage = (...output) => {
     setMessages([...messages, ...output]);
-    // Aquí puedes añadir la lógica para enviar el mensaje a la IA y recibir la respuesta
   };
 
   return (

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
+import SidebarUser from '../components/SidebarUser'
 import styled from 'styled-components'
 import imageChatbot from '../assets/images/chatbotImage.png'
 import Typography from '@mui/material/Typography'
@@ -8,6 +9,9 @@ import Container from '@mui/material/Container'
 import ChatbotInteraction from '../components/ChatbotInteraction'
 import Navbar from '../components/NavbarEbooks'
 import axios from 'axios';
+import  { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 const ContainerChatbotMenuPrincipal = styled('div')({
     display: 'flex',
@@ -31,7 +35,7 @@ const LogoDiv = styled(Container)({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '50%',
+  width: '40%',
   alignSelf: 'center',
   overflow: 'hidden',
   boxSizing: 'border-box'
@@ -41,6 +45,16 @@ const LogoDiv = styled(Container)({
 
 
 const Chatbot = () => {
+
+  const [user, setUser] = useState({})
+
+  const navigate = useNavigate();
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setUser(user)
+    }, [navigate]);
+
   const activateMicrophone = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_REACT_API_URL}/api/v1/bot/speech-to-text`);
@@ -55,8 +69,9 @@ const Chatbot = () => {
     <>
       <div style={{display:'flex', flexDirection: 'column'}}>
         <ContainerChatbotMenuPrincipal>
+          <SidebarUser email={user.email} name={user.name}/>
           <LogoDiv>
-            <Navbar page='Regresar' route='/principalmenu'/>
+            <Navbar page='' route='/principalmenu'/>
             <Image src={imageChatbot} alt='logo tutor bot'/>
             <Typography variant='h3' sx={{fontFamily: 'Lily Script One'}}>Tutor Bot</Typography>
           </LogoDiv>

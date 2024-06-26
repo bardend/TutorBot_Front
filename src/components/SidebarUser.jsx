@@ -13,18 +13,21 @@ import { useNavigate } from 'react-router-dom';
 const SidebarContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  width: '20%',
+  width: '210px', // Ancho fijo
   height: '100vh',
   backgroundColor: theme.palette.background.paper,
   alignItems: 'center',
   fontFamily: 'Popins, sans-serif',
   paddingLeft: '0',
-  margin: '0',
   boxSizing: 'border-box',
+  position: 'sticky',
+  top: '0', // Para fijar en la parte superior
+  zIndex: '1000', // Asegura que esté por encima de otros contenidos al hacer scroll
+  
 }));
 
 const UserPhoto = styled(Box)(({ theme }) => ({
-  width: '80%',
+  width: '200px',
   height: '10rem',
   padding: theme.spacing(2, 0),
   display: 'flex',

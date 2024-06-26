@@ -2,6 +2,7 @@
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { AppBar, Typography } from '@mui/material';
+import { red } from '@mui/material/colors';
 import { Link } from 'react-router-dom';
 const Navbar = ({page, route}) => {
   return (
@@ -10,7 +11,7 @@ const Navbar = ({page, route}) => {
         flexDirection:'row',
         justifyContent:'left',
         alignItems:'center'
-        ,padding:'20px',   
+        ,padding:'15px',   
         gap: '20px',
         // backgroundColor: backgroundColor ? backgroundColor : 'var(--secondary-color)',
         backgroundColor:'transparent',
@@ -20,7 +21,7 @@ const Navbar = ({page, route}) => {
 
     >
         <Link to = {route} style={{textDecoration:'none'}}>
-        <ArrowBackIcon/>
+        <ArrowBackIcon sx={{ fontSize: 35}} />
       </Link>
         
         <Typography variant='h5'>{page}</Typography>
