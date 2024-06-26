@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Typography, Grid, Paper, Avatar, Button, LinearProgress, 
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Card, CardContent, Divider
 } from '@mui/material';
 import { 
-  Email, CalendarToday, LibraryBooks, Star, 
-  AccessTime, TrendingUp, EmojiEvents
+  Email, LibraryBooks, Star, AccessTime, TrendingUp, EmojiEvents, SentimentVeryDissatisfied
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
@@ -58,37 +57,90 @@ const ProgressSection = styled('div')(({ theme }) => ({
 }));
 
 const MiPerfil = () => {
-  const user = JSON.parse(localStorage.getItem('user')) || {
-    name: 'Usuario Ejemplo',
-    email: 'usuario@ejemplo.com',
-    photoURL: '/default-avatar.png'
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null); // State to hold the user ID
+
+  // Fetch user data from localStorage on component mount
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.user_id) {
+      setUserId(user.user_id); // Set the user ID for fetching profile
+    }
+  }, []);
+
+  // Fetch profile data based on userId
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!userId) return; // Exit if userId is not defined yet
+
+      try {
+        console.log(`Fetching profile for user ID: ${userId}`);
+        const response = await fetch(`http://localhost:8000/${userId}/profile`);
+        if (!response.ok) {
+          const errorDetails = await response.text();
+          throw new Error(`Error fetching user profile: ${errorDetails}`);
+        }
+        const data = await response.json();
+        console.log("Profile data:", data);
+        setProfile(data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setError(error.message);
+      }
+    };
+
+    fetchProfile();
+  }, [userId]);
+
+  // Función para determinar el color y el ícono basado en la puntuación
+  const getScoreStyles = (score) => {
+    let color = '#4CAF50'; // Verde por defecto para puntajes altos
+    let icon = <Star />; // Icono por defecto para puntajes altos
+
+    if (score < 10) {
+      color = '#F44336'; // Rojo para puntajes bajos
+      icon = <SentimentVeryDissatisfied />; // Icono de carita triste para puntajes bajos
+    }
+
+    return { color, icon };
   };
 
+  // Renderizado condicional en caso de error
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  // Renderizado condicional mientras se carga el perfil
+  if (!profile) {
+    return <div>Loading...</div>;
+  }
+
+  // Extracción de datos del perfil y estadísticas
+  const { name, email, total_exams, average_score } = profile;
   const stats = {
-    totalQuizzes: 50,
-    averageScore: 85,
-    totalTime: '30h 45m',
-    lastActive: '20 min atraz',
-    completionRate: 75,
-    ranking: 15,
-    badges: 8,
-    streak: 7,
+    totalQuizzes: 50, // Ejemplo de datos estáticos para estadísticas
+    averageScore: average_score ? parseFloat(average_score).toFixed(2) : 0, // Puntuación promedio
+    totalTime: '30h 45m', // Ejemplo de datos estáticos para estadísticas
+    lastActive: '20 min atrás', // Ejemplo de datos estáticos para estadísticas
+    completionRate: 75, // Ejemplo de datos estáticos para estadísticas
+    ranking: 15, // Ejemplo de datos estáticos para estadísticas
+    badges: 8, // Ejemplo de datos estáticos para estadísticas
+    streak: 7, // Ejemplo de datos estáticos para estadísticas
   };
 
-  const recentActivity = [
-    { date: '2023-06-20', activity: 'Completó el cuestionario de React Avanzado', score: 95 },
-    { date: '2023-06-18', activity: 'Obtuvo la insignia "Experto en JavaScript"', score: null },
-    { date: '2023-06-15', activity: 'Completó el cuestionario de Node.js Básico', score: 88 },
-  ];
+  // Determina el estilo de la puntuación
+  const { color, icon } = getScoreStyles(stats.averageScore);
 
+  // JSX del componente MiPerfil
   return (
     <ProfileContainer>
       <ProfileHeader elevation={3}>
-        <ProfileAvatar src={user.photoURL} alt={user.name} />
+        <ProfileAvatar src="/default-avatar.png" alt={name} />
         <ProfileInfo>
-          <Typography variant="h4" gutterBottom>{user.name}</Typography>
+          <Typography variant="h4" gutterBottom>{name}</Typography>
           <IconText>
-            <Email /> <Typography variant="body1">{user.email}</Typography>
+            <Email /> <Typography variant="body1">{email}</Typography>
           </IconText>
           <Button variant="contained" color="primary" sx={{ mt: 2, alignSelf: 'flex-start' }}>
             Editar Perfil
@@ -112,10 +164,10 @@ const MiPerfil = () => {
         <Grid item xs={12} md={3}>
           <StatsCard>
             <CardContent>
-              <Typography variant="h6" gutterBottom>Puntuación</Typography>
-              <Typography variant="h3">{stats.averageScore}%</Typography>
+              <Typography variant="h6" gutterBottom>Puntuación 20</Typography>
+              <Typography variant="h3" style={{ color }}>{stats.averageScore}</Typography>
               <IconText>
-                <Star />
+                {icon}
                 <Typography variant="body2">Promedio general</Typography>
               </IconText>
             </CardContent>
@@ -190,13 +242,7 @@ const MiPerfil = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {recentActivity.map((row, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{row.date}</TableCell>
-                        <TableCell>{row.activity}</TableCell>
-                        <TableCell align="right">{row.score ? `${row.score}%` : '-'}</TableCell>
-                      </TableRow>
-                    ))}
+                    {/* Aquí puedes mapear los datos de `recentActivity` como lo hiciste anteriormente */}
                   </TableBody>
                 </Table>
               </TableContainer>

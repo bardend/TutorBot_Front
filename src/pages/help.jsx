@@ -17,49 +17,35 @@ const ContainerEbook = styled.div`
   overflow-y: auto;
   padding: 20px;
   box-sizing: border-box;
-  margin-right: 400px; // Aumentado para el Sidebar más ancho
 `;
 
 const Sidebar = styled.div`
-  width: 400px; // Aumentado el ancho
-  background-image: url('https://example.com/path-to-your-background-image.jpg'); // Reemplaza con tu URL de imagen
-  background-size: cover;
-  background-position: center;
+  width: 300px;
+  background-color: #f0f0f0;
   padding: 20px;
   box-sizing: border-box;
   overflow-y: auto;
-  position: fixed;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 1000;
-  color: white; // Cambiado a blanco para contrastar con el fondo
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.8); // Sombra para mejorar la legibilidad
 `;
 
 const SidebarTitle = styled.h2`
-  color: white;
-  font-size: 24px;
-  margin-bottom: 20px;
-  text-align: center;
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 15px;
 `;
 
 const SidebarContent = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.6;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6); // Fondo semitransparente para mejorar la legibilidad
-  padding: 20px;
-  border-radius: 10px;
 `;
 
 const LanguageGif = styled.img`
   width: 100%;
-  max-width: 300px;
+  max-width: 250px;
   height: auto;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-radius: 8px;
 `;
 
