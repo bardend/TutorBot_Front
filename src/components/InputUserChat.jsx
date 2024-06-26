@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
-import { TextField, Button, IconButton } from '@mui/material';
+/* eslint-disable react/prop-types */
+import  { useState, useEffect } from 'react';
+import { TextField, Button } from '@mui/material';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import MicIcon from '@mui/icons-material/Mic';
+
 
 const InputContainer = styled('div')({
     display: 'flex',
@@ -21,54 +22,46 @@ const InputContainer = styled('div')({
     borderRadius: '10px',
 });
 
-const InputUserChat = ({ onSendMessage, activateMicrophone }) => {
+
+const InputUserChat = ({ onSendMessage }) => {
   const [newMessage, setNewMessage] = useState('');
-  const [user, setUser] = useState({});
+
+  const [user, setUser] = useState({})
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) {
-      navigate('/');
-    }
-    setUser(user);
-  }, [navigate]);
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            navigate('/');
+        }
+        setUser(user)
+    }, [navigate]);
 
-  const handleSendMessage = async (message) => {
-    if (message.trim()) {
+  const handleSendMessage = async () => {
+    if (newMessage.trim()) {
+      setNewMessage('');
       try {
         const response = await axios.post(`${import.meta.env.VITE_REACT_API_URL}/api/v1/bot/ask`, {
-          question: message,
-          name: user.name
+           question: newMessage,
+           name: user.name
         }, {
-          headers: {
-            'Content-Type': 'application/json',
-          }
+            headers: {
+                'Content-Type': 'application/json',
+            }
         });
 
         if (response.status === 200) {
-          console.log('Respuesta recibida:', response.data);
-          onSendMessage({type:'user', text: message}, {type:'bot', text: response.data.res});
+            console.log('Respuesta recibida:', response.data);
+            onSendMessage({type:'user', text: newMessage}, {type:'bot', text: response.data.res})
         } else {
-          onSendMessage({type:'user', text: message});
-          console.error('Error al crear el quiz');
+            onSendMessage({type:'user', text: newMessage})
+            console.error('Error al crear el quiz');
         }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-      setNewMessage('');
-    }
-  };
-
-  const handleMicrophoneClick = async () => {
-    try {
-      const transcript = await activateMicrophone();
-      if (transcript) {
-        setNewMessage(transcript);
-        handleSendMessage(transcript);
-      }
     } catch (error) {
-      console.error('Error al activar el micrófono:', error);
+        console.error('Error:', error);
+    }
+      
     }
   };
 
@@ -82,16 +75,13 @@ const InputUserChat = ({ onSendMessage, activateMicrophone }) => {
         placeholder="Escribe tu mensaje..."
         onKeyPress={(e) => {
           if (e.key === 'Enter') {
-            handleSendMessage(newMessage);
+            handleSendMessage();
           }
         }}
       />
-      <Button variant="contained" color="primary" onClick={() => handleSendMessage(newMessage)}>
+      <Button variant="contained" color="primary" onClick={handleSendMessage}>
         Enviar
       </Button>
-      <IconButton color="primary" onClick={handleMicrophoneClick}>
-        <MicIcon />
-      </IconButton>
     </InputContainer>
   );
 };
